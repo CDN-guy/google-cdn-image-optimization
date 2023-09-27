@@ -12,9 +12,9 @@ This module supports reading **JPEG, PNG, WebP, GIF, AVIF, TIFF and SVG** images
 Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF**, **AVIF** and **TIFF** formats as well as uncompressed **raw pixel data**.
 
 ## Diagrams
-[![Architecture_Diagram](./architecture_diagrams/CDN_ImageOptimization_Architecture_Diagram.png)]
+![Architecture_Diagram](./architecture_diagrams/CDN_ImageOptimization_Architecture_Diagram.png)
 
-[![Sequence_Flow_Diagram](./architecture_diagrams/Sequence_Flow_Diagram.png)]
+![Sequence_Flow_Diagram](./architecture_diagrams/Sequence_Flow_Diagram.png)
 
 
 ## Deploy with CloudCDN via Terraform
