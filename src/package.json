@@ -1,0 +1,30 @@
+{
+  "name": "imageoptimization",
+  "description": "Image Optimizer in Node.js and Sharp w/ global custom Libvips",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "author": "Xiaozang Li",
+  "contributors": [
+    "Dave Reisfeld",
+    "Anirudh Murali",
+    "Gaurav Madan",
+    "Prakash Daga",
+    "Kamil Burczyk"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "lru-cache": "^10.0.0",
+    "sharp": "^0.32.4"
+  },
+  "config": {
+    "libvips": "^8.14.3"
+  }
+}
