@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.3
+
+* Add auto-rorate function
+
 ### v1.0.2 
 
 * Add support for Google MediaCDN
