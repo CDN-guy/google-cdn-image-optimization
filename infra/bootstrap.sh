@@ -2,13 +2,10 @@
 
 set -euo pipefail
 
-PROJECT_ID="img-optimization"
-PROJECT_NUM="1088347617355"
-LOCATION="us-east1"
-REPO_NAME="img-optimization-repo"
-
-
-#us-east1-docker.pkg.dev/img-optimization/img-optimization-repo-1088347617355/image-optimizer:latest
+PROJECT_ID=""
+PROJECT_NUM=""
+LOCATION=""
+REPO_NAME=""
 
 # Enable services
 printf "=========================================\n"
@@ -30,20 +27,10 @@ cd ../src || exit
 gcloud builds submit --tag "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}-${PROJECT_NUM}/image-optimizer:latest" 
 cd ../infra || exit
 
-# printf "=========================================\n"
-# printf "Creating backend bucket...\n" 
-# printf "=========================================\n"
-# gcloud storage buckets create gs://"${BACKEND_BUCKET}-${PROJECT_NUM}"
-
 printf "=========================================\n"
 printf "Initializing terraform...\n" 
 printf "=========================================\n"
 terraform init
-
-printf "=========================================\n"
-printf "Planning terraform...\n" 
-printf "=========================================\n"
-terraform plan
 
 printf "=========================================\n"
 printf "Applying terraform...\n" 

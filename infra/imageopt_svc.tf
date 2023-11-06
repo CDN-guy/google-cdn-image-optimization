@@ -59,6 +59,7 @@ resource "google_compute_backend_service" "imageopt_serverless_backend" {
 
     cache_key_policy {
       include_http_headers = ["x-client-ua-family", "x-client-device-type"]
+      query_string_whitelist = ["w", "h", "f", "q", "p", "fit"]
     }
   }
 
