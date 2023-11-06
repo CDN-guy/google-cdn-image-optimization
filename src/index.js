@@ -230,7 +230,7 @@ async function processImage(image, width, height, format, quality, in_fit, in_po
 
    console.log(`[image optimizer]parameters: ${JSON.stringify(resizeParams)}, ${format_out}, ${JSON.stringify(formatParam)}`)
 
-    return await sharp(image).resize(resizeParams).toFormat(format_out, formatParam); //.crop(sharp.gravity.center)
+    return await sharp(image).resize(resizeParams).toFormat(format_out, formatParam).rotate(); //.crop(sharp.gravity.center)
 
 }
 
