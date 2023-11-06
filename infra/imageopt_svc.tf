@@ -14,7 +14,7 @@ resource "google_cloud_run_v2_service" "imageopt_svc" {
     containers {
       image = var.imageopt_svc_image
       resources {
-        limits = {cpu = 4, memory = "8G"}
+        limits = {cpu = 6, memory = "8GiB"}
         cpu_idle = true
         startup_cpu_boost = true
       }

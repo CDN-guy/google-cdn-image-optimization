@@ -8,11 +8,11 @@ const UA =  'ImageOptimizer/CloudRun'
 
 // add LRU
 // set built-in LRU storage
-const LRU_CACHE_LIMIT_IN_GB = 6
+const LRU_CACHE_LIMIT_IN_GB = 4
 const { LRUCache } = require('lru-cache');
 const options = {
     // Cache Limit in GB
-    maxSize: LRU_CACHE_LIMIT_IN_GB * 1000 * 1000 * 1000,
+    maxSize: LRU_CACHE_LIMIT_IN_GB * 1024 * 1024 * 1024,
     sizeCalculation: (value, key) => {
         return Buffer.byteLength(value)
       }
@@ -27,12 +27,15 @@ var cache = () => {
     // extract device_type & ua_family
     const device_type = req.headers['x-client-device-type'] || 'device_type';
     const ua_family = req.headers['x-client-ua-family'] || 'ua_family';
+
     // extract width & height & format
     var width = parseInt(req.query.w) || 'none';
     var height = parseInt(req.query.h) || 'none';
+
     // set default image format to webp, except MSIE browser
-    var format = req.query.f || 'webp'; 
+    var format = req.query.f || req.headers['x-client-accept'] || 'webp';
     if (ua_family == 'MSIE') {format = 'jpg'};
+
     // selection image qualiy
     var quality = parseInt(req.query.q) || 'none';
     if (quality == 'none') {
@@ -245,7 +248,8 @@ app.get('/images/*', cache(), async (req, res, next) => {
 
         // BEGIN: Transformation Settings
         // set default image format to webp, except MSIE browser
-        var format = req.query.f || 'webp'; 
+        //var format = req.query.f || 'webp'; 
+        var format = req.query.f || req.headers['x-client-accept'] || 'webp';
         if (ua_family == 'MSIE') {format = 'jpg'};
         
         // selection image qualiy
@@ -280,7 +284,10 @@ app.get('/images/*', cache(), async (req, res, next) => {
         // END: Transformation Settings
 
         // construct image url
-        const image_url = `${req.protocol}://${req.header('host')}${req.path.replace("images","original")}`
+        // const image_url = `${req.protocol}://${req.header('host')}${req.path.replace("images","original")}`
+        // Use the x-client-host header populated by WASM
+        const origin_host = req.header('x-client-host') || req.header('host')
+        const image_url = `${req.protocol}://${origin_host}${req.path.replace("images","original")}`
 
         // origin image fecthing
         var start = Date.now();
@@ -292,7 +299,7 @@ app.get('/images/*', cache(), async (req, res, next) => {
         console.log(`[express]Image Download Time: ${ end - start } ms`);
         // error handling in case origin images not available
         if (response_status_code != 200) { 
-            res.status(response_status_code).end(`Image Optimizer failed to retrieve images from origin: origin response ${response.status}`); 
+            res.status(response_status_code).end(`{"error_message": "Origin Error", "origin_url": "${image_url}", "origin_response_code":${response.status}}`); 
         }
         else {
             // call Image Processing function

@@ -1,5 +1,11 @@
 # Changelog
 
+### v1.0.2 
+
+* Add support for Google MediaCDN
+
+* Tune up CloudRun performance and edit Terraform deployment scripts 
+
 ### v1.0.1 
 
 * Re-organize Repo structure
