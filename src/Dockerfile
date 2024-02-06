@@ -1,9 +1,9 @@
 # build base used for global libvips
-FROM node:18-alpine as builder
+FROM node:18-alpine3.19 as builder
 
 # install jxl, heif for AVIF, JPEG XL support
 RUN apk update && \
-    apk add vips && \
+    apk add vips==8.15.0-r0 && \
     apk add vips-heif && \
     apk add vips-jxl && \
     apk add vips-tools && \
