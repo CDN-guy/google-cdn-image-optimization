@@ -1,15 +1,16 @@
+// Imports Dependencies
 const sharp = require("sharp");
 const express = require('express');
+// Initialize express instance
 const app = express();
 app.disable('x-powered-by');
 
-// set user-agent
-const UA =  'ImageOptimizer/CloudRun'
+// set User-Agent
+const UA_String =  'ImageOptimizer/CloudRun'
 
-// add LRU
-// set built-in LRU storage
+// Introduce LRU-cache as an in-memory caching layer to reduce processing time
+// set storage upper limit for LRU cache
 const LRU_CACHE_LIMIT_IN_GB = 4
-const { LRUCache } = require('lru-cache');
 const options = {
     // Cache Limit in GB
     maxSize: LRU_CACHE_LIMIT_IN_GB * 1024 * 1024 * 1024,
@@ -17,14 +18,21 @@ const options = {
         return Buffer.byteLength(value)
       }
     }
+
+const { LRUCache } = require('lru-cache');
 const lru_cache = new LRUCache(options)
 
-// lru-cache funciton
+
+// LRU-cache funciton
+// Customize LRU-cache: CacheKey construction, Cache Hit/Cache Miss
+// LRU will be used as middleware of express
 var cache = () => {
   return (req, res, next) => {
 
     // cache key construction
     // extract device_type & ua_family
+    // [device_type] = 'desktop', 'tablet', 'smart_tv', 'game_console', 'set_top_box', 'wearable', 'smart_speaker', 'mobile'
+    // these values are populated from upstream CDN layer
     const device_type = req.headers['x-client-device-type'] || 'device_type';
     const ua_family = req.headers['x-client-ua-family'] || 'ua_family';
 
@@ -36,7 +44,8 @@ var cache = () => {
     var format = req.query.f || req.headers['x-client-accept'] || 'webp';
     if (ua_family == 'MSIE') {format = 'jpg'};
 
-    // selection image qualiy
+    // quality
+    // [options.quality] integer: 1 - 100
     var quality = parseInt(req.query.q) || 'none';
     if (quality == 'none') {
         switch (device_type.toLowerCase()) {
@@ -119,11 +128,14 @@ var cache = () => {
         default:
             fit = 'cover';
     }
+    // Contrusct LRU-Cache CacheKey based on the transformations
     // Add transformation type into the cache key
     let key = `f:${format}-q:${quality}-w:${width}-h:${height}-position:${position}-fit:${fit}:${req.baseUrl}${req.path}`;
 
+    // LRU cache lookup
     let cachedBody = lru_cache.get(key);
     
+    // Cache-Hit Scenario
     if (cachedBody) {
       console.log(`[lru-cache]${req.method} ${req.originalUrl}`);
       console.log(`[lru-cache]Cache hit for ${key}`);
@@ -134,6 +146,7 @@ var cache = () => {
       res.send(cachedBody);
       return
     } else {
+        // Cache-Miss Scenario
         console.log(`[lru-cache]${req.method} ${req.originalUrl}`);
         console.log(`[lru-cache]Cache miss for ${key}`);
         res.sendResponse = res.send;
@@ -149,7 +162,8 @@ var cache = () => {
   }
 }
 
-// Image Processing function by calling sharp
+// Image Processing function
+// Invoke Sharp with Transformatons as arguments
 async function processImage(image, width, height, format, quality, in_fit, in_position) {
    let resizeParams = {};
    let formatParam = {};
@@ -230,11 +244,12 @@ async function processImage(image, width, height, format, quality, in_fit, in_po
 
    console.log(`[image optimizer]parameters: ${JSON.stringify(resizeParams)}, ${format_out}, ${JSON.stringify(formatParam)}`)
 
-    return await sharp(image).resize(resizeParams).toFormat(format_out, formatParam).rotate(); //.crop(sharp.gravity.center)
+    return await sharp(image).resize(resizeParams).toFormat(format_out, formatParam).rotate();
 
 }
 
-// express web server 
+// Express web server configuration
+// only listen to /images/* path
 app.get('/images/*', cache(), async (req, res, next) => {    
     try{
         
@@ -252,7 +267,8 @@ app.get('/images/*', cache(), async (req, res, next) => {
         var format = req.query.f || req.headers['x-client-accept'] || 'webp';
         if (ua_family == 'MSIE') {format = 'jpg'};
         
-        // selection image qualiy
+        // quality
+        // [options.quality] integer  1 - 100
         var quality = parseInt(req.query.q) || 'none';
         if (quality == 'none') {
             switch (device_type.toLowerCase()) {
@@ -275,8 +291,6 @@ app.get('/images/*', cache(), async (req, res, next) => {
             }
         }
 
-
-        // To-do: add gravity, fit support
         // [options.fit] string 'cover', 'contain', 'fill', 'inside', 'outside'
         // [options.gravity] string 'north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest', 'center'
         var position = req.query.p;
@@ -289,9 +303,9 @@ app.get('/images/*', cache(), async (req, res, next) => {
         const origin_host = req.header('x-client-host') || req.header('host')
         const image_url = `${req.protocol}://${origin_host}${req.path.replace("images","original")}`
 
-        // origin image fecthing
+        // original image fecthing
         var start = Date.now();
-        const response = await fetch(image_url, {headers: {'User-Agent': 'ImageOptimizer/CloudRun'}});
+        const response = await fetch(image_url, {headers: {'User-Agent': UA_String}});
         const response_arrayBuffer = await response.arrayBuffer();
         const response_status_code = await response.status;
         const data = Buffer.from(response_arrayBuffer, 'binary');
@@ -299,7 +313,7 @@ app.get('/images/*', cache(), async (req, res, next) => {
         console.log(`[express]Image Download Time: ${ end - start } ms`);
         // error handling in case origin images not available
         if (response_status_code != 200) { 
-            res.status(response_status_code).end(`{"error_message": "Origin Error", "origin_url": "${image_url}", "origin_response_code":${response.status}}`); 
+            res.status(response_status_code).end(`{"error_message": "Error: Failed to retrive original images", "image_origin_url": "${image_url}", "error_response_code":${response.status}}`); 
         }
         else {
             // call Image Processing function
@@ -326,11 +340,10 @@ app.get('/original/*', async (req, res) => {
 
 // block any request not coming with /images/ 
 app.get('/*', async (req, res) => {
-    res.status(403).send("Image Optimizer only responds to path under /images/");
+    res.status(403).send("Access Denied: invalid request - not /images/*");
 });
 
 const port = parseInt(process.env.PORT) || 8080;
 app.listen(port, () => {
  console.log(`Image Optimizer: listening on port ${port}`);
 });
-
