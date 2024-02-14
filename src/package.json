@@ -1,7 +1,7 @@
 {
   "name": "imageoptimization",
   "description": "Image Optimizer in Node.js and Sharp w/ global custom Libvips",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "main": "index.js",
   "scripts": {

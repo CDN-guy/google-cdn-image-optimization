@@ -17,11 +17,11 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
 ![Sequence_Flow_Diagram](./architecture_diagrams/Sequence_Flow_Diagram.png)
 
 
-## Deploy with CloudCDN via Terraform
+## Deploy to Cloud CDN via Terraform
 
 1. Clone this repo.
    ```
-   git clone https://source.developers.google.com/p/na294c7a396895cf2-tp/r/cdn-image-optimizer
+   git clone https://github.com/CDN-guy/google-cdn-image-optimization.git
    ```
 
 1. Change to the Infrastructure deployment directory.
@@ -29,8 +29,19 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
    cd infra
    ```
 
-1. Open `variables.tf`, put in your own **project_id**, **project_number**, **cloudrun_region**, **origin_fqdn** and **origin_base_path** then save.
-(leave **imageopt_svc_image** as default unless you want to use your own custom-built container image)
+
+1. Create a file named **infra.tfvars** under the **/infra** directory
+    - Set the variable values for `project_id`, `project_number`, `cloudrun_region`, `origin_fqdn` and `origin_base_path` with your preference.
+    - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image)
+
+    | Variable      | Description |
+    | ----------- | ----------- |
+    | project_id      | GCP project ID       |
+    | project_number   | GCP project Number        |
+    | cloudrun_region   | Region where CloudRun should be deployed        |
+    | origin_fqdn   | FQDN of origin server        |
+    | origin_base_path   | Base Path of origin, default `/original/`        |
+
     ```
     variable "project_id" {
         type        = string
@@ -59,13 +70,12 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
     variable "origin_fqdn" {
         type        = string
         description = "FQDN of origin"
-        default     = "xxx.xxxx.xxx"
     }
 
     variable "origin_base_path" {
         type        = string
         description = "base path for images on origin"
-        default     = "/xxxx/"
+        default     = "/original/"
     }
     ```
 
@@ -73,10 +83,16 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
 1. Run the following commands to initiate Terraform for deployment. 
     ```
     terraform init
-    terraform plan
-    terraform apply -auto-approve
+    terraform plan -var-file="infra.tfvars"
+    terraform apply -var-file="infra.tfvars" -auto-approve
     ```
 
-## Demo Page
+## Deploy to Media CDN via Terraform & gCloud SDK
+
+[Instruction for MediaCDN](src/media_cdn.md)
+
+## Demo Pages
 
 [Cloud CDN Demo Page](https://images.thegoogle.cloud/cdn-IO.html)
+
+[Media CDN Demo Page](https://service-extensions.thegoogle.cloud/demo.html)

@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.4
+
+* Extend infrastructure deployment support for Google Media CDN 
+
 ### v1.0.3
 
 * Add auto-rorate function
