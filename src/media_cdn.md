@@ -1,12 +1,12 @@
-## Image Optimization on Media CDN deployment instruction
+## Image Optimizer on Media CDN deployment instruction
 
 > Caution: Media CDN and Service Extensions on Media CDN require an allowlist process. Please make sure that your project is allowlisted before proceeding.
 >
 > To request access to Media CDN and Service Extensions on Media CDN, contact your Google Cloud sales representative or your account team.
 
 
-### Step 1: Deploy Media CDN and Image Optimization Engine on CloudRun
-we will be deploying Media CDN configuration and the Cloud Run Image Optimizaiton container using Terraform
+### Step 1: Deploy Media CDN and Image Optimizer Engine on CloudRun
+we will be deploying Media CDN and Image Optimizer running on Cloud Run using Terraform
 
 1. Clone this repo.
    ```
@@ -18,14 +18,14 @@ we will be deploying Media CDN configuration and the Cloud Run Image Optimizaito
    cd infra_mcdn
    ```
 
-1. Create a file named **infra_mcdn.tfvars** under the **/infra_mcdn** directory
+1. Create a file named **infra_mcdn.tfvars** under the **infra_mcdn** directory
     - Set the variable values for `project_id`, `project_number`, `cloudrun_region`, `origin_fqdn` and `origin_base_path` with your preference.
     - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image)
 
     example:
 
     ```
-    project_id = "img-optimization"
+    project_id = "abc123xyz"
     project_number = "1111111111111"
     cloudrun_region = "us-central1"
     origin_fqdn = "www.google.com"
@@ -49,7 +49,7 @@ we will be deploying Media CDN configuration and the Cloud Run Image Optimizaito
     ```
 
 ### Step 2: Deploy Service Extensions plugin
-Next, we will deploy the Service Extensions Image-Opt plugin. The plugin will be responsible for identifying device type & broswer family, then signaling the Image Optimization Engine to select the optimal Image transformations. We will be using **gcloud** SDK in this section. 
+Next, we will deploy the Service Extensions Image-Opt plugin. The plugin is responsible for parsing user-agent strings and identifying device type & broswer family, which then signaling the Image Optimizer Engine to apply the optimal Image transformations. We will be using **gcloud** SDK in this section. 
 
 > **plugin container image**
 >

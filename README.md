@@ -3,7 +3,9 @@
 ## Use case
 This Node.js module is for converting large images in common formats to smaller, web-friendly **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF** and **AVIF** images of varying dimensions.
 
-With the integration of [Cloud CDN Content Targeting](http://go/customer-cloud-cdn-modify-cache-key), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
+Cloud CDN support - With the integration of `Cloud CDN Content Targeting`(under Private Preview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
+
+**[LATEST]** Media CDN support - With edge compute capability `Service Extensions on Media CDN`(https://cloud.google.com/service-extensions/docs/plugins-overview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
 ## Formats
 
@@ -18,6 +20,7 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
 
 
 ## Deploy to Cloud CDN via Terraform
+The following instructions will lead the path to a complete deployment of Cloud CDN and Image Optimizer.
 
 1. Clone this repo.
    ```
@@ -30,9 +33,19 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
    ```
 
 
-1. Create a file named **infra.tfvars** under the **/infra** directory
+1. Create a file named **infra.tfvars** under the **infra** directory
     - Set the variable values for `project_id`, `project_number`, `cloudrun_region`, `origin_fqdn` and `origin_base_path` with your preference.
     - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image)
+
+    example:
+
+    ```
+    project_id = "abc123xyz"
+    project_number = "1111111111111"
+    cloudrun_region = "us-central1"
+    origin_fqdn = "www.google.com"
+    origin_base_path = "/"
+    ```
 
     | Variable      | Description |
     | ----------- | ----------- |
@@ -41,44 +54,6 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
     | cloudrun_region   | Region where CloudRun should be deployed        |
     | origin_fqdn   | FQDN of origin server        |
     | origin_base_path   | Base Path of origin, default `/original/`        |
-
-    ```
-    variable "project_id" {
-        type        = string
-        default     = "xxxx"
-        description = "Project ID"
-    }
-
-    variable "project_number" {
-        type        = string
-        default     = "xxxx"
-        description = "Project Number"
-    }
-
-    variable "cloudrun_region" {
-        type        = string
-        default     = "us-east1"
-        description = "Default region"
-    }
-
-    variable "imageopt_svc_image" {
-        type        = string
-        default     = "us-east1-docker.pkg.dev/img-optimization/img-optimization-repo-1088347617355/image-optimizer:latest"
-        description = "Default region"
-    }
-
-    variable "origin_fqdn" {
-        type        = string
-        description = "FQDN of origin"
-    }
-
-    variable "origin_base_path" {
-        type        = string
-        description = "base path for images on origin"
-        default     = "/original/"
-    }
-    ```
-
 
 1. Run the following commands to initiate Terraform for deployment. 
     ```
@@ -89,7 +64,7 @@ Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**,
 
 ## Deploy to Media CDN via Terraform & gCloud SDK
 
-[Instruction for MediaCDN](src/media_cdn.md)
+[Check out the Instruction for MediaCDN](src/media_cdn.md)
 
 ## Demo Pages
 
