@@ -4,6 +4,7 @@
 >
 > To request access to Media CDN and Service Extensions on Media CDN, contact your Google Cloud sales representative or your account team.
 
+A similar instruction from Google Developers Codelabs can be found [here](https://codelabs.developers.google.com/service-extensions-mediacdn) 
 
 ### Step 1: Deploy Media CDN and Image Optimizer Engine on CloudRun
 we will be deploying Media CDN and Image Optimizer running on Cloud Run using Terraform
