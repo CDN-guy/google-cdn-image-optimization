@@ -5,7 +5,7 @@ This Node.js module is for converting large images in common formats to smaller,
 
 Cloud CDN support - With the integration of `Cloud CDN Content Targeting`(under Private Preview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
-**[LATEST]** Media CDN support - With edge compute capability `Service Extensions on Media CDN`(https://cloud.google.com/service-extensions/docs/plugins-overview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
+**[LATEST]** Media CDN support - With edge compute capability [Service Extensions on Media CDN](https://cloud.google.com/service-extensions/docs/plugins-overview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
 ## Formats
 
