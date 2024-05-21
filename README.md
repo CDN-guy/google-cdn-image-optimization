@@ -5,7 +5,7 @@ This Node.js module is for converting large images in common formats to smaller,
 
 Cloud CDN support - with the integration of `Cloud CDN Content Targeting`(under Private Preview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
-**[LATEST]** Media CDN support - with the recent released `Device-Type and User-Agent Characterization capability` (Generally Available), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
+**[NEW]** Media CDN support - with the recent released `Device-Type and User-Agent Characterization capability` (Generally Available), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
 ## Formats
 
@@ -35,8 +35,7 @@ The following instructions will lead the path to a complete deployment of Cloud 
 
 1. Create a file named **infra.tfvars** under the **infra** directory
     - Set the variable values for `project_id`, `project_number`, `cloudrun_region`, `origin_fqdn` and `origin_base_path` with your preference.
-    - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image)
-
+    - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image [follow bootstrap.sh])
     example:
 
     ```

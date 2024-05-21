@@ -3,3 +3,5 @@ node_modules
 original
 npm-debug.log
 accessories
+# ignore service extensions
+media_cdn_wasm

@@ -28,11 +28,15 @@ gcloud builds submit --tag "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME
 cd ../infra || exit
 
 printf "=========================================\n"
-printf "Initializing terraform...\n" 
+printf "Custom Image built sucessfully\n" 
 printf "=========================================\n"
-terraform init
 
-printf "=========================================\n"
-printf "Applying terraform...\n" 
-printf "=========================================\n"
-terraform apply -auto-approve
+# printf "=========================================\n"
+# printf "Initializing terraform...\n" 
+# printf "=========================================\n"
+# terraform init
+
+# printf "=========================================\n"
+# printf "Applying terraform...\n" 
+# printf "=========================================\n"
+# terraform apply -auto-approve
