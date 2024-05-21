@@ -133,8 +133,7 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
         description = "a route rule to match against"
         priority = 200
         match_rule {
-#          prefix_match = "/images/"
-           prefix_match = "/api/v1/images/stellar/prod/"
+          prefix_match = "/images/"
         }
         origin = google_network_services_edge_cache_origin.image-opt-cr-origin.name
         route_action {
@@ -152,6 +151,16 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
           }
         }
         header_action {
+          request_header_to_add {
+            header_name = "x-client-device-type"
+            header_value = "{device_request_type}"
+            replace = true
+          }
+          request_header_to_add {
+            header_name = "x-client-ua-family"
+            header_value = "{user_agent_family}"
+            replace = true
+          }
           response_header_to_add {
             header_name = "x-mcdn-cache-status"
             header_value = "{cdn_cache_status}"
