@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.5
+
+* Remove Service Extensions and Switch to MediaCDN's native support of device-type, ua-family 
+
 ### v1.0.4
 
 * Extend infrastructure deployment support for Google Media CDN 
