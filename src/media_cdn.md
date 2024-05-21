@@ -19,7 +19,7 @@ we will be deploying Media CDN and Image Optimizer running on Cloud Run using Te
 
 1. Create a file named **infra_mcdn.tfvars** under the **infra_mcdn** directory
     - Set the variable values for `project_id`, `project_number`, `cloudrun_region`, `origin_fqdn` and `origin_base_path` with your preference.
-    - (leave `imageopt_svc_image` as default value - except you prefer to use a custom-built container image [follow bootstrap.sh])
+    - (leave `imageopt_svc_image` as default value - unless you prefer to custom build your own container image [steps in bootstrap.sh])
 
     example:
 

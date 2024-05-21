@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-PROJECT_ID=""
-PROJECT_NUM=""
-LOCATION=""
-REPO_NAME=""
+PROJECT_ID="" # gcp project id
+PROJECT_NUM="" # gcp project number
+LOCATION="" # e.g. us-central1
+REPO_NAME="" # e.g. img-opt
 
 # Enable services
 printf "=========================================\n"
@@ -17,7 +17,7 @@ gcloud services enable artifactregistry.googleapis.com cloudapis.googleapis.com 
 printf "=========================================\n"
 printf "Creating Artifact Registry docker repo...\n" 
 printf "=========================================\n"
-gcloud artifacts repositories create "${REPO_NAME}-${PROJECT_NUM}" --location "${LOCATION}" --repository-format=docker --project "${PROJECT_ID}"
+gcloud artifacts repositories create "${REPO_NAME}-${PROJECT_NUM}" --location "${LOCATION}" --repository-format=docker --project "${PROJECT_ID}" || 
 
 # Run Cloud Build for backend with name of repo to build and push proxy images and imaginary image
 printf "=========================================\n"
@@ -28,15 +28,6 @@ gcloud builds submit --tag "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME
 cd ../infra || exit
 
 printf "=========================================\n"
-printf "Custom Image built sucessfully\n" 
+printf "[Success]Image URL:\n" 
+printf "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}-${PROJECT_NUM}/image-optimizer:latest\n"
 printf "=========================================\n"
-
-# printf "=========================================\n"
-# printf "Initializing terraform...\n" 
-# printf "=========================================\n"
-# terraform init
-
-# printf "=========================================\n"
-# printf "Applying terraform...\n" 
-# printf "=========================================\n"
-# terraform apply -auto-approve
