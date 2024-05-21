@@ -99,15 +99,15 @@ resource "google_compute_global_forwarding_rule" "imageopt_global_fwding_rule" {
 # Section2: Media CDN 
 # MCDN Edge Cache Origin
 resource "google_network_services_edge_cache_origin" "image-opt-cr-origin" {
-  name                 = "img-opt-cr-origin"
+  name                 = "img-opt-cloud-run"
   origin_address       = google_compute_global_address.imageopt-lb-ip.address
   description          = "The External LB IP for Image Optimization Engine"
   protocol = "HTTP"
   port = 80
 }
 
-resource "google_network_services_edge_cache_origin" "real-origin" {
-  name                 = "origin"
+resource "google_network_services_edge_cache_origin" "primitive-origin" {
+  name                 = "primitive-origin"
   origin_address       = var.origin_fqdn
   description          = "The FQDN for Origin"
   origin_override_action {
@@ -133,7 +133,7 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
         description = "a route rule to match against"
         priority = 200
         match_rule {
-          prefix_match = "/images/"
+          prefix_match = var.origin_base_path
         }
         origin = google_network_services_edge_cache_origin.image-opt-cr-origin.name
         route_action {
@@ -174,7 +174,7 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
         match_rule {
           prefix_match = "/original/"
         }
-        origin = google_network_services_edge_cache_origin.real-origin.name
+        origin = google_network_services_edge_cache_origin.primitive-origin.name
         route_action {
           cdn_policy {
               cache_mode = "FORCE_CACHE_ALL"
@@ -198,7 +198,7 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
         match_rule {
           prefix_match = "/"
         }
-        origin = google_network_services_edge_cache_origin.real-origin.name
+        origin = google_network_services_edge_cache_origin.primitive-origin.name
         route_action {
           cdn_policy {
               cache_mode = "FORCE_CACHE_ALL"
