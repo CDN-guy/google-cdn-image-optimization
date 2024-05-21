@@ -161,6 +161,11 @@ resource "google_network_services_edge_cache_service" "image-opt-cdn" {
             header_value = "{user_agent_family}"
             replace = true
           }
+          request_header_to_add {
+            header_name = "x-client-host"
+            header_value = "{tls_sni_hostname}"
+            replace = true
+          }
           response_header_to_add {
             header_name = "x-mcdn-cache-status"
             header_value = "{cdn_cache_status}"

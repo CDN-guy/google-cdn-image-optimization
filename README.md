@@ -69,4 +69,4 @@ The following instructions will lead the path to a complete deployment of Cloud 
 
 [Cloud CDN Demo Page](https://images.thegoogle.cloud/cdn-IO.html)
 
-[Media CDN Demo Page](https://service-extensions.thegoogle.cloud/demo.html)
+[Media CDN Demo Page](https://media-cdn.thegoogle.cloud/image-opt-demo.html)
