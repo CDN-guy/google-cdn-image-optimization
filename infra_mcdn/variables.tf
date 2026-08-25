@@ -10,7 +10,7 @@ variable "project_number" {
 
 variable "cloudrun_region" {
   type        = string
-  default = "us-east1"
+  default     = "us-east1"
   description = "GCP region to deploy CloudRun"
 }
 

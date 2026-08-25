@@ -3,8 +3,8 @@ resource "google_cloud_run_v2_service" "imageopt_svc" {
   name     = "imageopt-svc"
   location = var.cloudrun_region
   project  = var.project_id
-  ingress = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-  
+  ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+
   template {
     scaling {
       min_instance_count = 1
@@ -14,8 +14,8 @@ resource "google_cloud_run_v2_service" "imageopt_svc" {
     containers {
       image = var.imageopt_svc_image
       resources {
-        limits = {cpu = 6, memory = "8Gi"}
-        cpu_idle = true
+        limits            = { cpu = 6, memory = "8Gi" }
+        cpu_idle          = true
         startup_cpu_boost = true
       }
     }
@@ -25,7 +25,7 @@ resource "google_cloud_run_v2_service" "imageopt_svc" {
 # CloudRun IAM
 resource "google_cloud_run_v2_service_iam_binding" "imageopt_svc_unauthenticated_invoke" {
   location = google_cloud_run_v2_service.imageopt_svc.location
-  name  = google_cloud_run_v2_service.imageopt_svc.name
+  name     = google_cloud_run_v2_service.imageopt_svc.name
   role     = "roles/run.invoker"
   members = [
     "allUsers"
@@ -47,25 +47,25 @@ resource "google_compute_region_network_endpoint_group" "imageopt_svc_neg" {
 
 # Serverless backend service
 resource "google_compute_backend_service" "imageopt_serverless_backend" {
-  name        = "imageopt-serverless-backend-service"
+  name                  = "imageopt-serverless-backend-service"
   load_balancing_scheme = "EXTERNAL_MANAGED"
 
-  enable_cdn  = true
+  enable_cdn = true
   cdn_policy {
-    cache_mode = "FORCE_CACHE_ALL"
-    default_ttl = 3600
-    client_ttl  = 3600
+    cache_mode       = "FORCE_CACHE_ALL"
+    default_ttl      = 3600
+    client_ttl       = 3600
     negative_caching = false
 
     cache_key_policy {
-      include_http_headers = ["x-client-ua-family", "x-client-device-type"]
-      include_query_string = true
+      include_http_headers   = ["x-client-ua-family", "x-client-device-type"]
+      include_query_string   = true
       query_string_whitelist = ["w", "h", "f", "q", "p", "fit"]
     }
   }
 
-  custom_request_headers          = ["x-client-ua-family: {user_agent_family}", "x-client-device-type: {device_request_type}"]
-  custom_response_headers         = ["x-cache-status: {cdn_cache_status}","x-client-ua-family: {user_agent_family}", "x-client-device-type: {device_request_type}"]
+  custom_request_headers  = ["x-client-ua-family: {user_agent_family}", "x-client-device-type: {device_request_type}"]
+  custom_response_headers = ["x-cache-status: {cdn_cache_status}", "x-client-ua-family: {user_agent_family}", "x-client-device-type: {device_request_type}"]
 
   backend {
     group = google_compute_region_network_endpoint_group.imageopt_svc_neg.id
@@ -83,33 +83,33 @@ resource "google_compute_global_network_endpoint_group" "internet_neg" {
 
 # Internet Endpoint
 resource "google_compute_global_network_endpoint" "internet_endpoint" {
-  provider              = google-beta
+  provider                      = google-beta
   global_network_endpoint_group = google_compute_global_network_endpoint_group.internet_neg.name
-  fqdn       = var.origin_fqdn
-  port       = google_compute_global_network_endpoint_group.internet_neg.default_port
+  fqdn                          = var.origin_fqdn
+  port                          = google_compute_global_network_endpoint_group.internet_neg.default_port
 }
 
 # Internet NEG Backend Service
 resource "google_compute_backend_service" "internet_backend" {
   provider              = google-beta
-  name        = "internet-backend-service"
+  name                  = "internet-backend-service"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
 
-  enable_cdn  = true
+  enable_cdn                      = true
   timeout_sec                     = 10
   connection_draining_timeout_sec = 10
   cdn_policy {
-    cache_mode = "FORCE_CACHE_ALL"
-    default_ttl = 3600
-    client_ttl  = 3600
+    cache_mode       = "FORCE_CACHE_ALL"
+    default_ttl      = 3600
+    client_ttl       = 3600
     negative_caching = false
 
     signed_url_cache_max_age_sec = 7200
 
   }
 
-  custom_response_headers         = ["x-cache-status: {cdn_cache_status}"]
+  custom_response_headers = ["x-cache-status: {cdn_cache_status}"]
 
   backend {
     group = google_compute_global_network_endpoint_group.internet_neg.id
@@ -121,7 +121,7 @@ resource "google_compute_backend_service" "internet_backend" {
 # reserved LB IP address
 resource "google_compute_global_address" "imageopt-lb-ip" {
   provider = google-beta
-  name = "imageopt-lb-static-ip"
+  name     = "imageopt-lb-static-ip"
 }
 
 # LB url map

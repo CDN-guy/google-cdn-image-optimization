@@ -7,3 +7,4 @@ accessories
 media_cdn_wasm
 
 infra/.terraform*
+infra_mcdn/.terraform*
