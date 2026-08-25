@@ -23,7 +23,7 @@ const { LRUCache } = require('lru-cache');
 const lru_cache = new LRUCache(options)
 
 
-// LRU-cache funciton
+// LRU-cache function
 // Customize LRU-cache: CacheKey construction, Cache Hit/Cache Miss
 // LRU will be used as middleware of express
 var cache = () => {
@@ -37,17 +37,21 @@ var cache = () => {
     const ua_family = req.headers['x-client-ua-family'] || 'ua_family';
 
     // extract width & height & format
-    var width = parseInt(req.query.w) || 'none';
-    var height = parseInt(req.query.h) || 'none';
+      const parsedW = parseInt(req.query.w);
+      const parsedH = parseInt(req.query.h);
+      const width = (!isNaN(parsedW) && parsedW > 0 && parsedW <= 4096) ? parsedW : 'none';
+      const height = (!isNaN(parsedH) && parsedH > 0 && parsedH <= 4096) ? parsedH : 'none';
 
     // set default image format to webp, except MSIE browser
-    var format = req.query.f || req.headers['x-client-accept'] || 'webp';
-    if (ua_family == 'MSIE') {format = 'jpg'};
+      const allowedFormats = ['webp', 'jpeg', 'jpg', 'png', 'gif', 'jp2', 'jxl', 'tiff', 'raw'];
+      let rawFormat = (req.query.f || req.headers['x-client-accept'] || 'webp').toLowerCase();
+      if (ua_family == 'MSIE') { rawFormat = 'jpg'; }
+      const format = allowedFormats.includes(rawFormat) ? rawFormat : 'webp';
 
     // quality
     // [options.quality] integer: 1 - 100
-    var quality = parseInt(req.query.q) || 'none';
-    if (quality == 'none') {
+      let quality = parseInt(req.query.q);
+      if (isNaN(quality) || quality < 1 || quality > 100) {
         switch (device_type.toLowerCase()) {
             case 'desktop':
                 quality = 60;
@@ -128,7 +132,7 @@ var cache = () => {
         default:
             fit = 'cover';
     }
-    // Contrusct LRU-Cache CacheKey based on the transformations
+      // Construct LRU-Cache CacheKey based on the transformations
     // Add transformation type into the cache key
     let key = `f:${format}-q:${quality}-w:${width}-h:${height}-position:${position}-fit:${fit}:${req.baseUrl}${req.path}`;
 
@@ -151,10 +155,12 @@ var cache = () => {
         console.log(`[lru-cache]Cache miss for ${key}`);
         res.sendResponse = res.send;
         res.send = (body) => {
-            lru_cache.set(key, body);
-            // add Cache-Status header
-            res.header('X-IO-Cache', 'MISS');
-            res.header('X-IO-Cache-Key', `${key}`);
+            if (res.statusCode >= 200 && res.statusCode < 300 && Buffer.isBuffer(body)) {
+                lru_cache.set(key, body);
+                // add Cache-Status header
+                res.header('X-IO-Cache', 'MISS');
+                res.header('X-IO-Cache-Key', `${key}`);
+            }
             res.sendResponse(body);
       }
       next();
@@ -258,19 +264,22 @@ app.get('/images/*', cache(), async (req, res, next) => {
         const ua_family = req.headers['x-client-ua-family'] || 'others';
 
         // parse image parameters from incoming query strings
-        const width = parseInt(req.query.w);
-        const height = parseInt(req.query.h);
+        const parsedW = parseInt(req.query.w);
+        const parsedH = parseInt(req.query.h);
+        const width = (!isNaN(parsedW) && parsedW > 0 && parsedW <= 4096) ? parsedW : undefined;
+        const height = (!isNaN(parsedH) && parsedH > 0 && parsedH <= 4096) ? parsedH : undefined;
 
         // BEGIN: Transformation Settings
         // set default image format to webp (AVIF disabled), except MSIE browser
-        //var format = req.query.f || 'webp'; 
-        var format = req.query.f || req.headers['x-client-accept'] || 'webp';
-        if (ua_family == 'MSIE') {format = 'jpg'};
+        const allowedFormats = ['webp', 'jpeg', 'jpg', 'png', 'gif', 'jp2', 'jxl', 'tiff', 'raw'];
+        let rawFormat = (req.query.f || req.headers['x-client-accept'] || 'webp').toLowerCase();
+        if (ua_family == 'MSIE') { rawFormat = 'jpg'; }
+        const format = allowedFormats.includes(rawFormat) ? rawFormat : 'webp';
         
         // quality
         // [options.quality] integer  1 - 100
-        var quality = parseInt(req.query.q) || 'none';
-        if (quality == 'none') {
+        let quality = parseInt(req.query.q);
+        if (isNaN(quality) || quality < 1 || quality > 100) {
             switch (device_type.toLowerCase()) {
                 case 'desktop':
                     quality = 60;
@@ -313,7 +322,7 @@ app.get('/images/*', cache(), async (req, res, next) => {
         console.log(`[express]Image Download Time: ${ end - start } ms`);
         // error handling in case origin images not available
         if (response_status_code != 200) { 
-            res.status(response_status_code).end(`{"error_message": "Error: Failed to retrive original images", "image_origin_url": "${image_url}", "error_response_code":${response.status}}`); 
+            res.status(response_status_code).end(`{"error_message": "Error: Failed to retrieve original images", "image_origin_url": "${image_url}", "error_response_code":${response.status}}`); 
         }
         else {
             // call Image Processing function
@@ -334,9 +343,9 @@ app.get('/images/*', cache(), async (req, res, next) => {
 });
 
 // please comment this section before upload to Cloud Run
-app.get('/original/*', async (req, res) => {
-    res.sendFile(`${__dirname}${req.path.replace("original","images")}`);
-});
+// app.get('/original/*', async (req, res) => {
+//     res.sendFile(`${__dirname}${req.path.replace("original","images")}`);
+// });
 
 // block any request not coming with /images/ 
 app.get('/*', async (req, res) => {
