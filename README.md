@@ -1,5 +1,9 @@
 # Google CDN Image Optimizer
 
+[![CI](https://github.com/CDN-guy/google-cdn-image-optimization/actions/workflows/ci.yml/badge.svg)](https://github.com/CDN-guy/google-cdn-image-optimization/actions/workflows/ci.yml)
+[![Node.js 20+](https://img.shields.io/badge/node-20+-green.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 ## Overview
 A high-performance, containerized image transformation service built on **Sharp**. It provides dynamic on-the-fly image resizing, format conversion, and compression optimized for **Google Cloud CDN** and **Google Media CDN**.
 
