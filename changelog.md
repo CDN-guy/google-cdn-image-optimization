@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.6
+
+* Disable AVIF support
+
 ### v1.0.5
 
 * Remove Service Extensions and Switch to MediaCDN's native support of device-type, ua-family 
@@ -10,7 +14,7 @@
 
 ### v1.0.3
 
-* Add auto-rorate function
+* Add auto-rotate function
 
 ### v1.0.2 
 

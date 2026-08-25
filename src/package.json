@@ -1,14 +1,15 @@
 {
   "name": "imageoptimization",
   "description": "Image Optimizer in Node.js and Sharp w/ global custom Libvips",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node --max-old-space-size=6144 index.js",
+    "test": "node --test"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=20.9.0"
   },
   "author": "Xiaozang Li",
   "contributors": [

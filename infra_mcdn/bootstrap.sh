@@ -17,7 +17,7 @@ gcloud services enable artifactregistry.googleapis.com cloudapis.googleapis.com 
 printf "=========================================\n"
 printf "Creating Artifact Registry docker repo...\n" 
 printf "=========================================\n"
-gcloud artifacts repositories create "${REPO_NAME}-${PROJECT_NUM}" --location "${LOCATION}" --repository-format=docker --project "${PROJECT_ID}" || 
+gcloud artifacts repositories create "${REPO_NAME}-${PROJECT_NUM}" --location "${LOCATION}" --repository-format=docker --project "${PROJECT_ID}"
 
 # Run Cloud Build for backend with name of repo to build and push proxy images and imaginary image
 printf "=========================================\n"
@@ -25,7 +25,7 @@ printf "Building images...\n"
 printf "=========================================\n"
 cd ../src || exit
 gcloud builds submit --tag "${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}-${PROJECT_NUM}/image-optimizer:latest" 
-cd ../infra || exit
+cd ../infra_mcdn || exit
 
 printf "=========================================\n"
 printf "[Success]Image URL:\n" 

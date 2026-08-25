@@ -5,3 +5,6 @@ npm-debug.log
 accessories
 # ignore everything under service extensions
 media_cdn_wasm
+
+infra/.terraform*
+infra_mcdn/.terraform*
