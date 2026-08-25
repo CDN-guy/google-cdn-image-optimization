@@ -22,9 +22,9 @@
   "dependencies": {
     "express": ">=4.20.0",
     "lru-cache": "^10.0.0",
-    "sharp": "0.33.2"
+    "sharp": ">=0.35.0"
   },
   "config": {
-    "libvips": "8.15.1"
+    "libvips": ">=8.18.6"
   }
 }
