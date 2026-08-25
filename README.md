@@ -1,7 +1,7 @@
 # Google CDN Image Optimizer
 
 ## Use case
-This Node.js module is for converting large images in common formats to smaller, web-friendly **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF** and **AVIF** images of varying dimensions.
+This Node.js module is for converting large images in common formats to smaller, web-friendly **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF** images of varying dimensions.
 
 Cloud CDN support - with the integration of `Cloud CDN Content Targeting`(under Private Preview), you get the benefits of image optimization based on `device_type` and `user_agent_famliy` out of the box, with optional customizations of image **width**, **height**, and **quality**.
 
@@ -9,9 +9,11 @@ Cloud CDN support - with the integration of `Cloud CDN Content Targeting`(under 
 
 ## Formats
 
-This module supports reading **JPEG, PNG, WebP, GIF, AVIF, TIFF and SVG** images.
+This module supports reading **JPEG, PNG, WebP, GIF, TIFF and SVG** images.
 
-Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF**, **AVIF** and **TIFF** formats as well as uncompressed **raw pixel data**.
+Output images can be in **JPEG**, **JPEG 2000**, **JPEG XL**, **PNG**, **WebP**, **GIF** and **TIFF** formats as well as uncompressed **raw pixel data**.
+
+**[AVIF support]** is currently disabled.
 
 ## Diagrams
 ![Architecture_Diagram](./architecture_diagrams/CDN_ImageOptimization_Architecture_Diagram.png)
