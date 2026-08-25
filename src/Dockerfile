@@ -1,10 +1,10 @@
 # build base used for global libvips
 FROM node:18-alpine3.19 as builder
 
-# install jxl, heif for AVIF, JPEG XL support
+# install jxl for JPEG XL support 
+# To-do: add "vips-heif" back once AVIF issue is fixed
 RUN apk update && \
     apk add vips==8.15.0-r0 && \
-    apk add vips-heif && \
     apk add vips-jxl && \
     apk add vips-tools && \
     apk add vips-cpp && \
@@ -26,7 +26,7 @@ RUN npm install
 COPY . .
 
 # final base used for delivery
-FROM node:18-alpine as final
+FROM node:18-alpine3.19 as final
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -34,7 +34,6 @@ WORKDIR /usr/src/app
 # install global libvips
 RUN apk update && \
     apk add vips && \
-    apk add vips-heif && \
     apk add vips-jxl && \
     apk add vips-tools && \
     apk add vips-cpp 

@@ -142,7 +142,7 @@ var cache = () => {
       // add Cache-Status header
       res.header('X-IO-Cache', 'HIT');
       res.header('X-IO-Cache-Key', `${key}`);
-      if (format == 'avif') {res.type('image/avif')} else if (format == 'jp2') {res.type('image/jp2')} else if (format == 'jxl') {res.type('image/jxl')} else {res.type(format)};
+        if (format == 'jp2') { res.type('image/jp2') } else if (format == 'jxl') { res.type('image/jxl') } else { res.type(format) };
       res.send(cachedBody);
       return
     } else {
@@ -262,7 +262,7 @@ app.get('/images/*', cache(), async (req, res, next) => {
         const height = parseInt(req.query.h);
 
         // BEGIN: Transformation Settings
-        // set default image format to webp, except MSIE browser
+        // set default image format to webp (AVIF disabled), except MSIE browser
         //var format = req.query.f || 'webp'; 
         var format = req.query.f || req.headers['x-client-accept'] || 'webp';
         if (ua_family == 'MSIE') {format = 'jpg'};
@@ -324,7 +324,7 @@ app.get('/images/*', cache(), async (req, res, next) => {
             console.log(`[express]Image Process Time: ${ end - start } ms`);
         
             // respond to client with correct content-type
-            if (format == 'avif') {res.type('image/avif')} else if (format == 'jp2') {res.type('image/jp2')} else if (format == 'jxl') {res.type('image/jxl')} else {res.type(format)};
+            if (format == 'jp2') { res.type('image/jp2') } else if (format == 'jxl') { res.type('image/jxl') } else { res.type(format) };
             res.send(buffer);
         }
     } catch (err){
