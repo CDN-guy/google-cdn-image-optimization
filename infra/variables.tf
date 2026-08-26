@@ -17,7 +17,7 @@ variable "cloudrun_region" {
 variable "imageopt_svc_image" {
   type        = string
   description = "Container image URL in Artifact Registry"
-  default     = "us-east1-docker.pkg.dev/img-optimization/img-optimization-repo-1088347617355/image-optimizer:v1.0.4"
+  default     = "us-east1-docker.pkg.dev/img-optimization/img-optimization-repo-1088347617355/image-optimizer:v1.0.6"
 }
 
 variable "origin_fqdn" {
