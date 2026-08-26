@@ -400,10 +400,10 @@ app.get('/images/*path', cache(), async (req, res, next) => {
 
 });
 
-// please comment this section before upload to Cloud Run
-app.get('/original/*origin_path', async (req, res) => {
-    res.sendFile(`${__dirname}${req.path.replace("original", "images")}`);
-});
+// // please comment this section before upload to Cloud Run
+// app.get('/original/*origin_path', async (req, res) => {
+//     res.sendFile(`${__dirname}${req.path.replace("original", "images")}`);
+// });
 
 // block any request not coming with /images/ 
 app.get('/*others', async (req, res) => {
