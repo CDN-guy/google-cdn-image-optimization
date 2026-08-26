@@ -1,5 +1,5 @@
 # build base used for global libvips
-FROM node:20-alpine3.20 as builder
+FROM node:20-alpine3.20 AS builder
 
 # install jxl for JPEG XL support 
 # To-do: add "vips-heif" back once AVIF issue is fixed
@@ -26,7 +26,7 @@ RUN npm install
 COPY . .
 
 # final base used for delivery
-FROM node:20-alpine3.20 as final
+FROM node:20-alpine3.20 AS final
 
 # Create app directory
 WORKDIR /usr/src/app

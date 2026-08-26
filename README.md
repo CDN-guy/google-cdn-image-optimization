@@ -190,7 +190,7 @@ docker run -p 8080:8080 image-optimizer
 
 ## Demo Pages
 
-- [Cloud CDN Demo Page](https://images.thegoogle.cloud/cdn-IO.html)
+- [Cloud CDN Demo Page](https://cdn.thegoogle.cloud/demo/cdn-IO.html)
 - [Media CDN Demo Page](https://media-cdn.thegoogle.cloud/image-opt-demo.html)
 
 ---
