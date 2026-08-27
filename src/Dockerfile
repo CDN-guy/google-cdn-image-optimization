@@ -1,46 +1,43 @@
-# build base used for global libvips
+# Build base used for global libvips and native compilation
 FROM node:20-alpine3.20 AS builder
 
-# install jxl for JPEG XL support 
-# To-do: add "vips-heif" back once AVIF issue is fixed
+# Install libvips and build tools for JPEG XL and Sharp
 RUN apk update && \
-    apk add vips && \
-    apk add vips-jxl && \
-    apk add vips-tools && \
-    apk add vips-cpp && \
-    apk add vips-dev
-
-RUN apk add --update alpine-sdk
+    apk add --no-cache \
+    vips \
+    vips-jxl \
+    vips-tools \
+    vips-cpp \
+    vips-dev \
+    alpine-sdk
 
 # Create app directory
 WORKDIR /usr/src/app
 
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
+# Install production dependencies only
 COPY package*.json ./
-RUN npm install
+RUN npm install --omit=dev --no-audit --no-fund
 
 # Bundle app source
 COPY . .
 
-# final base used for delivery
+# Final base image used for deployment
 FROM node:20-alpine3.20 AS final
 
 # Create app directory
 WORKDIR /usr/src/app
 
-# install global libvips
+# Install runtime libvips libraries
 RUN apk update && \
-    apk add vips && \
-    apk add vips-jxl && \
-    apk add vips-tools && \
-    apk add vips-cpp 
+    apk add --no-cache \
+    vips \
+    vips-jxl \
+    vips-tools \
+    vips-cpp
 
-# Copy over the files from the build container src
+# Copy application and production dependencies from builder
 COPY --from=builder /usr/src/app ./
 
-# run index.js
+# Expose port and run server
 EXPOSE 8080
 CMD [ "node", "index.js" ]

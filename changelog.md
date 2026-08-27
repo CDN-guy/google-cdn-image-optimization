@@ -1,5 +1,17 @@
 # Changelog
 
+### v1.0.7
+
+* Refactor application into a modular architecture (`config`, `services`, `middlewares`, `app`).
+* Add ESLint (Flat Config) and TypeScript type checking (`tsc --noEmit`).
+* Add `/healthz` health check endpoint for Cloud Run and Load Balancer probes.
+* Add graceful shutdown handlers (`SIGTERM`/`SIGINT`).
+* Add security headers (`X-Content-Type-Options: nosniff`).
+* Add Docker build and container smoke test to GitHub Actions CI.
+* Optimize Dockerfile multi-stage build with `.dockerignore` and production dependency pruning.
+* Remove legacy `google-beta` Terraform provider dependencies and switch to non-authoritative IAM members.
+* Add Terraform variable examples (`infra.tfvars.example`, `infra_mcdn.tfvars.example`) and enhance `bootstrap.sh`.
+
 ### v1.0.6
 
 * Disable AVIF support
@@ -39,4 +51,3 @@
 * Adjust Cache Key Construction for LRU-cache to base on Tranformations instead of URL path & query string
 
 * Include Origin Image Error Handling.
-

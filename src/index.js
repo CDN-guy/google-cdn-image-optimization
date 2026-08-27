@@ -11,6 +11,22 @@ if (require.main === module) {
     server = app.listen(port, () => {
         console.log(`Image Optimizer: listening on port ${port}`);
     });
+
+    // Graceful shutdown handling for Cloud Run and container runtimes
+    const shutdown = (signal) => {
+        console.log(`${signal} received: closing HTTP server gracefully...`);
+        if (server) {
+            server.close(() => {
+                console.log('HTTP server closed.');
+                process.exit(0);
+            });
+        } else {
+            process.exit(0);
+        }
+    };
+
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 module.exports = {

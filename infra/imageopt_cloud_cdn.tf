@@ -23,20 +23,17 @@ resource "google_cloud_run_v2_service" "imageopt_svc" {
 }
 
 # CloudRun IAM
-resource "google_cloud_run_v2_service_iam_binding" "imageopt_svc_unauthenticated_invoke" {
+resource "google_cloud_run_v2_service_iam_member" "imageopt_svc_unauthenticated_invoke" {
   location = google_cloud_run_v2_service.imageopt_svc.location
   name     = google_cloud_run_v2_service.imageopt_svc.name
   role     = "roles/run.invoker"
-  members = [
-    "allUsers"
-  ]
+  member   = "allUsers"
 }
 
 # HTTP Load Balancer
 
 # Serverless Network Endpoint Group 
 resource "google_compute_region_network_endpoint_group" "imageopt_svc_neg" {
-  provider              = google-beta
   name                  = "imageopt-svc-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.cloudrun_region
@@ -75,7 +72,6 @@ resource "google_compute_backend_service" "imageopt_serverless_backend" {
 
 # Internet Network Endpoint Group
 resource "google_compute_global_network_endpoint_group" "internet_neg" {
-  provider              = google-beta
   name                  = "internet-neg"
   network_endpoint_type = "INTERNET_FQDN_PORT"
   default_port          = "443"
@@ -83,7 +79,6 @@ resource "google_compute_global_network_endpoint_group" "internet_neg" {
 
 # Internet Endpoint
 resource "google_compute_global_network_endpoint" "internet_endpoint" {
-  provider                      = google-beta
   global_network_endpoint_group = google_compute_global_network_endpoint_group.internet_neg.name
   fqdn                          = var.origin_fqdn
   port                          = google_compute_global_network_endpoint_group.internet_neg.default_port
@@ -91,7 +86,6 @@ resource "google_compute_global_network_endpoint" "internet_endpoint" {
 
 # Internet NEG Backend Service
 resource "google_compute_backend_service" "internet_backend" {
-  provider              = google-beta
   name                  = "internet-backend-service"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
@@ -117,11 +111,9 @@ resource "google_compute_backend_service" "internet_backend" {
 
 }
 
-
 # reserved LB IP address
 resource "google_compute_global_address" "imageopt-lb-ip" {
-  provider = google-beta
-  name     = "imageopt-lb-static-ip"
+  name = "imageopt-lb-static-ip"
 }
 
 # LB url map
@@ -149,6 +141,7 @@ resource "google_compute_url_map" "imageopt_lb_url_map" {
     }
   }
 }
+
 # http proxy
 resource "google_compute_target_http_proxy" "imageopt_http_proxy" {
   name    = "imageopt-http-proxy"
@@ -157,7 +150,6 @@ resource "google_compute_target_http_proxy" "imageopt_http_proxy" {
 
 # forwarding rule
 resource "google_compute_global_forwarding_rule" "imageopt_global_fwding_rule" {
-  provider              = google-beta
   name                  = "imageopt-global-rule"
   target                = google_compute_target_http_proxy.imageopt_http_proxy.id
   port_range            = "80"

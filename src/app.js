@@ -9,6 +9,12 @@ const { processImage } = require('./services/imageProcessor');
 const app = express();
 app.disable('x-powered-by');
 
+// Security headers middleware
+app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+});
+
 // Express web server configuration
 // Only listen to /images/* path
 app.get('/images/*path', cache(), async (req, res, next) => {
@@ -82,7 +88,12 @@ app.get('/images/*path', cache(), async (req, res, next) => {
     }
 });
 
-// Block any request not matching /images/*
+// Health check endpoint for Cloud Run and Load Balancers
+app.get('/healthz', (_req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: Date.now() });
+});
+
+// Block any request not matching /images/* or /healthz
 app.get('/*others', (_req, res) => {
     res.status(403).send("Access Denied: invalid request - not /images/*");
 });

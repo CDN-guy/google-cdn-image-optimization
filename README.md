@@ -15,6 +15,7 @@ A high-performance, containerized image transformation service built on **Sharp*
   - **Tier 2:** High-speed in-memory LRU cache on Cloud Run to eliminate redundant image processing.
 - **Auto-Rotation:** Automatically reads EXIF orientation tags and rotates images correctly.
 - **Legacy Browser Support:** Automatically falls back to standard JPEG for legacy user agents (such as MSIE).
+- **Health Check & Observability:** Built-in `/healthz` liveness/readiness probe and graceful shutdown handling.
 
 ---
 
@@ -65,6 +66,9 @@ When `q` is not specified in the query string, quality is auto-assigned based on
 - `inside`: Preserves aspect ratio, resizes image to fit completely within width/height boundaries.
 - `outside`: Preserves aspect ratio, resizes image to be as small as possible while ensuring dimensions are greater than or equal to targets.
 
+### Health Check Endpoint
+- `GET /healthz`: Returns `200 OK` with `{ status: "ok", timestamp: ... }` for Cloud Run, load balancers, and monitoring probes.
+
 ---
 
 ## CDN Header Integration
@@ -81,6 +85,7 @@ The service integrates seamlessly with Google Cloud CDN and Media CDN using cust
 - `X-IO-Cache`: Reports Cloud Run origin cache status (`HIT` or `MISS`).
 - `X-IO-Cache-Key`: Cache key generated from format, quality, dimensions, position, fit, and URL path.
 - `x-cache-status` / `x-mcdn-cache-status`: Upstream CDN edge cache status (`HIT`, `MISS`, `REVALIDATED`).
+- `X-Content-Type-Options`: Set to `nosniff` for enhanced MIME security.
 
 ---
 
@@ -94,13 +99,9 @@ The service integrates seamlessly with Google Cloud CDN and Media CDN using cust
    cd google-cdn-image-optimization/infra
    ```
 
-2. **Create your `infra.tfvars` file:**
-   ```hcl
-   project_id       = "your-gcp-project-id"
-   project_number   = "123456789012"
-   cloudrun_region  = "us-central1"
-   origin_fqdn      = "images.example.com"
-   origin_base_path = "/original/"
+2. **Create your `infra.tfvars` file (from template):**
+   ```bash
+   cp infra.tfvars.example infra.tfvars
    ```
 
    | Variable | Description | Default |
@@ -110,7 +111,7 @@ The service integrates seamlessly with Google Cloud CDN and Media CDN using cust
    | `cloudrun_region` | GCP Region where Cloud Run is deployed | `us-east1` |
    | `origin_fqdn` | FQDN of the backend origin holding original images | *Required* |
    | `origin_base_path` | Base path on origin server | `/original/` |
-   | `imageopt_svc_image`| Artifact Registry container image URL | Default prebuilt image |
+   | `imageopt_svc_image`| Artifact Registry container image URL | `...:v1.0.7` |
 
 3. **Deploy with Terraform:**
    ```bash
@@ -131,13 +132,9 @@ The service integrates seamlessly with Google Cloud CDN and Media CDN using cust
    cd google-cdn-image-optimization/infra_mcdn
    ```
 
-2. **Create your `infra_mcdn.tfvars` file:**
-   ```hcl
-   project_id       = "your-gcp-project-id"
-   project_number   = "123456789012"
-   cloudrun_region  = "us-central1"
-   origin_fqdn      = "images.example.com"
-   origin_base_path = "/"
+2. **Create your `infra_mcdn.tfvars` file (from template):**
+   ```bash
+   cp infra_mcdn.tfvars.example infra_mcdn.tfvars
    ```
 
 3. **Deploy with Terraform:**
@@ -169,7 +166,7 @@ If you wish to build and push your own container image to Artifact Registry rath
 
 ---
 
-## Local Development & Docker
+## Local Development & Testing
 
 ### Running Locally with Node.js
 ```bash
@@ -178,6 +175,15 @@ npm install
 npm start
 ```
 The server will start listening on `http://localhost:8080`.
+
+### Running Linting, Type Checks & Tests
+```bash
+cd src
+npm run check          # Runs ESLint, TypeScript check, and Node.js tests
+npm run lint           # Run ESLint only
+npm run type-check     # Run TypeScript type checking
+npm test               # Run Node.js test suite
+```
 
 ### Running Locally with Docker
 ```bash
