@@ -1,0 +1,11 @@
+# GCP Project configuration
+project_id       = "your-gcp-project-id"
+project_number   = "123456789012"
+cloudrun_region  = "us-central1"
+
+# Origin Backend configuration
+origin_fqdn      = "images.example.com"
+origin_base_path = "/original/"
+
+# Optional: Override container image URL
+# imageopt_svc_image = "us-central1-docker.pkg.dev/your-project/img-opt-123456789012/image-optimizer:v1.0.7"

@@ -116,6 +116,14 @@ describe('Image Optimizer Service Tests', () => {
   });
 
   describe('Integration Tests: Express Routes & Middleware', () => {
+    it('should respond with 200 OK and status JSON on /healthz', async () => {
+      const res = await fetch(`http://127.0.0.1:${appPort}/healthz`);
+      assert.strictEqual(res.status, 200);
+      const json = await res.json();
+      assert.strictEqual(json.status, 'ok');
+      assert.ok(typeof json.timestamp === 'number');
+    });
+
     it('should reject non-/images/ paths with 403 Access Denied', async () => {
       const res = await fetch(`http://127.0.0.1:${appPort}/not-images/foo.jpg`);
       assert.strictEqual(res.status, 403);
