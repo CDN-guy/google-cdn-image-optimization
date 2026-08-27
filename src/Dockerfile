@@ -39,9 +39,7 @@ RUN apk update && \
     apk add vips-cpp 
 
 # Copy over the files from the build container src
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package.json ./package.json
-COPY --from=builder /usr/src/app/index.js ./index.js
+COPY --from=builder /usr/src/app ./
 
 # run index.js
 EXPOSE 8080
