@@ -42,6 +42,7 @@ app.get('/images/*path', cache(), async (req, res, next) => {
         if (responseStatusCode !== 200) {
             return res.status(responseStatusCode).json({
                 error_message: "Error: Failed to retrieve original image",
+                details: `Origin server responded with status code ${responseStatusCode}`,
                 image_origin_url: imageUrl,
                 error_response_code: responseStatusCode
             });
@@ -54,14 +55,15 @@ app.get('/images/*path', cache(), async (req, res, next) => {
         } catch (err) {
             return res.status(415).json({
                 error_message: "Error: Input image is corrupted or unsupported format",
-                image_origin_url: imageUrl,
-                details: /** @type {Error} */ (err).message
+                details: /** @type {Error} */ (err).message,
+                image_origin_url: imageUrl
             });
         }
 
         if (!metadata || !metadata.format || !SUPPORTED_INPUT_FORMATS.includes(metadata.format.toLowerCase())) {
             return res.status(415).json({
-                error_message: `Error: Unsupported input image format '${metadata ? metadata.format : 'unknown'}'. Supported input formats: ${SUPPORTED_INPUT_FORMATS.join(', ')}`,
+                error_message: `Error: Unsupported input image format '${metadata ? metadata.format : 'unknown'}'`,
+                details: `Supported input formats: ${SUPPORTED_INPUT_FORMATS.join(', ')}`,
                 image_origin_url: imageUrl,
                 detected_format: metadata ? metadata.format : 'unknown'
             });
@@ -94,8 +96,27 @@ app.get('/healthz', (_req, res) => {
 });
 
 // Block any request not matching /images/* or /healthz
-app.get('/*others', (_req, res) => {
-    res.status(403).send("Access Denied: invalid request - not /images/*");
+app.get('/*others', (req, res) => {
+    res.status(403).json({
+        error_message: "Access Denied: Invalid request path",
+        details: `Route '${req.path}' is not accessible - only /images/* and /healthz are allowed`
+    });
+});
+
+// Global Express Error Handler for unexpected runtime exceptions
+// @ts-ignore Express error-handling middleware requires 4 parameters
+app.use((err, req, res, _next) => {
+    if (res.headersSent) {
+        return _next(err);
+    }
+
+    console.error(`[express error] ${req.method} ${req.originalUrl}:`, err);
+
+    const statusCode = err.statusCode || err.status || 500;
+    return res.status(statusCode).json({
+        error_message: "Error: Internal processing error",
+        details: err.message || "An unexpected error occurred during image processing"
+    });
 });
 
 module.exports = {

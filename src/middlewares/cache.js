@@ -24,6 +24,7 @@ const cache = () => {
         if (error) {
             res.status(error.status).json({
                 error_message: error.message,
+                details: error.details,
                 requested_format: error.requestedFormat
             });
             return;

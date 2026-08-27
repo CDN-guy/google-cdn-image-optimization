@@ -176,6 +176,18 @@ describe('Image Optimizer Service Tests', () => {
       assert.ok(json.error_message.includes('Input image is corrupted or unsupported format'));
     });
 
+    it('should handle unhandled fetch errors via global error handler returning 500 JSON', async () => {
+      const res = await fetch(`http://127.0.0.1:${appPort}/images/valid.jpg`, {
+        headers: {
+          'x-client-host': '127.0.0.1:1'
+        }
+      });
+      assert.strictEqual(res.status, 500);
+      const json = await res.json();
+      assert.strictEqual(json.error_message, 'Error: Internal processing error');
+      assert.ok(typeof json.details === 'string');
+    });
+
     it('should optimize image, return 200, and populate LRU cache headers', async () => {
       lru_cache.clear();
 

@@ -12,9 +12,17 @@ const { SUPPORTED_OUTPUT_FORMATS } = require('../config/constants');
  */
 
 /**
+ * @typedef {Object} ParamParseError
+ * @property {number} status - HTTP status code
+ * @property {string} message - Unified error message title
+ * @property {string} details - Detailed explanation of the error
+ * @property {string} [requestedFormat] - Requested format string
+ */
+
+/**
  * @typedef {Object} ParamParseResult
  * @property {ParsedImageParams | null} params
- * @property {{ status: number, message: string, requestedFormat?: string } | null} error
+ * @property {ParamParseError | null} error
  */
 
 /**
@@ -158,6 +166,7 @@ function parseImageParams(req) {
                 error: {
                     status: 400,
                     message: "Error: AVIF output format is currently disabled",
+                    details: "The AVIF output format is temporarily disabled pending upstream libvips updates.",
                     requestedFormat: req.query.f
                 }
             };
@@ -167,7 +176,8 @@ function parseImageParams(req) {
                 params: null,
                 error: {
                     status: 400,
-                    message: `Error: Unsupported output format '${req.query.f}'. Supported formats: ${SUPPORTED_OUTPUT_FORMATS.join(', ')}`,
+                    message: `Error: Unsupported output format '${req.query.f}'`,
+                    details: `Supported output formats: ${SUPPORTED_OUTPUT_FORMATS.join(', ')}`,
                     requestedFormat: req.query.f
                 }
             };
